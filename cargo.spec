@@ -1,11 +1,11 @@
 # To bootstrap from scratch, set the date from src/snapshots.txt
 # e.g. 0.11.0 wants 2016-03-21
-%bcond_without bootstrap
+%bcond_with bootstrap
 %global bootstrap_date 2016-03-21
 
 Name:           cargo
 Version:        0.11.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Rust's package manager and build tool
 License:        ASL 2.0 or MIT
 URL:            https://crates.io/
@@ -24,6 +24,8 @@ Source11:       %{bootstrap_base}-i686-unknown-linux-gnu.tar.gz
 
 # Use vendored crate dependencies so we can build offline.
 # Created using https://github.com/alexcrichton/cargo-vendor/
+# It's so big because some of the -sys crates include the C library source they
+# want to link to.  With our -devel buildreqs in place, they'll be used instead.
 # FIXME: These should all eventually be packaged on their own!
 # (needs directory registries, https://github.com/rust-lang/cargo/pull/2857)
 Source100:      %{name}-%{version}-vendor.tar.gz
@@ -138,5 +140,8 @@ rm -rf %{buildroot}/%{_docdir}/%{name}/
 
 
 %changelog
+* Mon Jul 18 2016 Josh Stone <jistone@fedoraproject.org> - 0.11.0-2
+- Rebuild without bootstrap binaries.
+
 * Sun Jul 17 2016 Josh Stone <jistone@fedoraproject.org> - 0.11.0-1
 - Initial package, bootstrapped
